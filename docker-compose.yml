@@ -1,17 +1,15 @@
----
-version: '3.7'
-services:
+services:   
   ## MySQL Docker Compose Config
   postgres-order:
     container_name: postgres-order
     image: postgres
     environment:
-      POSTGRES_DB: order-service
-      POSTGRES_USER: ptechie
-      POSTGRES_PASSWORD: password
-      PGDATA: /data/postgres
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mercury
+      PGDATA: /var/lib/postgres
     volumes:
-      - ./postgres-order:/data/postgres
+      - ./postgres-order:/var/lib/postgres
     expose:
       - "5431"
     ports:
@@ -23,12 +21,12 @@ services:
     container_name: postgres-inventory
     image: postgres
     environment:
-      POSTGRES_DB: inventory-service
-      POSTGRES_USER: ptechie
-      POSTGRES_PASSWORD: password
-      PGDATA: /data/postgres
+      POSTGRES_DB: pstgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mercury
+      PGDATA: /var/lib/postgres
     volumes:
-      - ./postgres-inventory:/data/postgres
+      - ./postgres-inventory:/var/lib/postgres
     ports:
       - "5432:5432"
     restart: always
@@ -52,10 +50,10 @@ services:
     volumes:
       - ./mysql_keycloak_data:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: keycloak
-      MYSQL_USER: keycloak
-      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: mercury
+      MYSQL_DATABASE: sys
+      MYSQL_USER: zfeng
+      MYSQL_PASSWORD: mercury
 
   keycloak:
     container_name: keycloak
@@ -64,9 +62,9 @@ services:
     environment:
       DB_VENDOR: MYSQL
       DB_ADDR: mysql
-      DB_DATABASE: keycloak
-      DB_USER: keycloak
-      DB_PASSWORD: password
+      DB_DATABASE: sys
+      DB_USER: zfeng
+      DB_PASSWORD: mercury
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     ports:
@@ -151,7 +149,7 @@ services:
     image: microservices-tutorial/order-service:latest
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-order:5431/order-service
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresdb:5431/postgres
     depends_on:
       - postgres-order
       - broker
@@ -165,7 +163,7 @@ services:
     image: microservices-tutorial/inventory-service:latest
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-inventory:5432/inventory-service
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresdb:5432/postgres
     depends_on:
       - postgres-inventory
       - discovery-server
